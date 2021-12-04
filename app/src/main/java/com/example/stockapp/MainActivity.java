@@ -1,18 +1,11 @@
 package com.example.stockapp;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -20,14 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stockapp.model.Stock;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements StocksAdapter.stockClickListener,
         NetworkingService.NetworkingListener {
-    ArrayList<Stock> stocks = new ArrayList<Stock>();
+    List<Stock> stocks = new ArrayList<>();
     RecyclerView recyclerView;
     StocksAdapter adapter;
     NetworkingService networkingManager;
@@ -43,10 +36,10 @@ public class MainActivity extends AppCompatActivity implements StocksAdapter.sto
         recyclerView = findViewById(R.id.stock_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        stocks.add(new Stock("temp"));
+        networkingManager.getAllStocksFromApi();
         adapter = new StocksAdapter(this,stocks);
         recyclerView.setAdapter(adapter);
-        setTitle("Search for new cities..");
+        setTitle("Search for new stocks");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,7 +67,16 @@ public class MainActivity extends AppCompatActivity implements StocksAdapter.sto
 
             @Override
             public boolean onQueryTextChange(String newText) {// after each char
+                if (newText.length() >= 3) {
+                    // search for cities
+                    //networkingManager.initializeStocks(newText);
+                }
+                else {
+                    stocks = new ArrayList<>(0);
+                    adapter.stockList = stocks;
+                    adapter.notifyDataSetChanged();
 
+                }
                 return false;
             }
         });
@@ -82,8 +84,13 @@ public class MainActivity extends AppCompatActivity implements StocksAdapter.sto
     }
 
     @Override
-    public void dataListener(String josnString) {
-
+    public void dataListener(String jsonString) {
+        // for testing
+        jsonString =   "[{\"symbol\": \"SNAP\",\"bidSize\": 200,\"bidPrice\": 110.94,\"askSize\": 100,\"askPrice\": 111.82,\"volume\": 177265,\"lastSalePrice\": 111.76,\"lastSaleSize\": 5,\"lastSaleTime\": 1480446905681,\"lastUpdated\": 1480446910557,\"sector\":\"softwareservices\",\"securityType\":\"commonstock\"}]";
+        stocks =  jsonService.getStocksFromJson(jsonString);
+        adapter = new StocksAdapter(this,stocks);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

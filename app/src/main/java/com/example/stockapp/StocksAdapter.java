@@ -54,7 +54,7 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
         public StocksViewHolder(View itemView) {
             super(itemView);
 
-            stockTextView = itemView.findViewById(R.id.stock);
+            stockTextView = itemView.findViewById(R.id.symbol);
 
             itemView.setOnClickListener(this);
         }

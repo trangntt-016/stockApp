@@ -1,11 +1,7 @@
 package com.example.stockapp;
 
-import static android.text.TextUtils.indexOf;
-import static android.text.TextUtils.substring;
-
-import android.text.TextUtils;
-
 import com.example.stockapp.model.Stock;
+import com.example.stockapp.utils.EntityConverterUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,24 +11,22 @@ import java.util.ArrayList;
 
 public class JSonService {
 
-    public ArrayList<Stock> getCitiesFromJSON(String json)  {
-        ArrayList<Stock> arrayList = new ArrayList<>(0);
+    public ArrayList<Stock> getStocksFromJson(String jsonArr)  {
+        ArrayList<Stock> stocksList = new ArrayList<>(0);
         try {
-            JSONArray json_stocks = new JSONArray(json);
+            JSONArray json_stocks = new JSONArray(jsonArr);
             for (int i = 0 ; i< json_stocks.length(); i++){
-                // "Torbert, LA, United States"
-                String fullCityName = json_stocks.getString(i);
-                int index = fullCityName.indexOf(fullCityName,',');
-                String cityName = substring(fullCityName,0,indexOf(fullCityName,','));
-                String countryName = substring(fullCityName,indexOf(fullCityName,',') + 1, fullCityName.length());
-                Stock c = new Stock(cityName);
-                arrayList.add(c);
+                // {"symbol":"SNAP","bidSize":200,...}
+                String fullStrStocks = json_stocks.getString(i);
+                JSONObject json = new JSONObject(fullStrStocks);
+                Stock stock = EntityConverterUtils.convertJsonToStockEntity(fullStrStocks);
+                stocksList.add(stock);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return arrayList;
+        return stocksList;
     }
 
 //    public WeatherData getWeatherData(String jsonString) {
