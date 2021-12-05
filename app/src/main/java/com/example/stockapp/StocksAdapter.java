@@ -14,22 +14,47 @@ import com.example.stockapp.model.Stock;
 import java.util.List;
 
 public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksViewHolder>{
-    interface stockClickListener {
+    Context mCtx;
+    List<Stock> stockList;
+    StockClickedListener listener;
+
+    public interface StockClickedListener {
         void stockClicked(Stock selectedStock);
     }
 
-    private Context mCtx;
-    public List<Stock> stockList;
-    stockClickListener listener;
 
     public StocksAdapter(Context mCtx, List<Stock> stockList) {
         this.mCtx = mCtx;
         this.stockList = stockList;
-        listener = (stockClickListener)mCtx;
+        listener = (StockClickedListener)mCtx;
     }
 
 
-    @NonNull
+    public static class StocksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private final TextView symbolTv;
+        private final TextView sectorTv;
+        private final TextView bidPriceTv;
+        private final TextView changeInPriceTv;
+
+        public StocksViewHolder(@NonNull View itemView) {
+            super(itemView);
+            symbolTv = itemView.findViewById(R.id.symbol);
+            sectorTv = itemView.findViewById(R.id.sector);
+            bidPriceTv = itemView.findViewById(R.id.bidPrice);
+            changeInPriceTv = itemView.findViewById(R.id.changeInPrice);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+//            Stock stock = stockList.get(getAdapterPosition());
+//            listener.stockClicked(stock);
+        }
+
+    }
+
     @Override
     public StocksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mCtx).inflate(R.layout.recyclerview_stocks, parent, false);
@@ -37,33 +62,17 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StocksAdapter.StocksViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StocksViewHolder holder, int position) {
         Stock stock = stockList.get(position);
-        holder.stockTextView.setText(stock.getPrice() +": "+stock.getPrevPrice());
+        holder.symbolTv.setText(stock.symbol);
+        holder.bidPriceTv.setText(String.valueOf(stock.bidPrice));
+        holder.sectorTv.setText(stock.sector);
+        holder.changeInPriceTv.setText(String.valueOf(stock.getPriceChange()));
+
     }
 
     @Override
     public int getItemCount() {
         return stockList.size();
-    }
-
-    class StocksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        TextView stockTextView;
-
-        public StocksViewHolder(View itemView) {
-            super(itemView);
-
-            stockTextView = itemView.findViewById(R.id.symbol);
-
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            Stock stock = stockList.get(getAdapterPosition());
-            listener.stockClicked(stock);
-
-        }
     }
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <TableRow
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="140px"
+    android:layout_height="wrap_content"
     android:paddingBottom="6sp"
     android:paddingTop="6sp"
     android:orientation="horizontal">
@@ -18,41 +19,39 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:textSize="28sp"
-            android:textColor="@color/white">
+            android:textColor="@color/black">
         </TextView>
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/company_name"
+            android:id="@+id/sector"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:textSize="16sp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textColor="@color/light_gray">
+            android:textColor="@color/black">
         </TextView>
     </LinearLayout>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/quote"
+    <TextView
+        android:id="@+id/bidPrice"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:textSize="28sp"
         android:gravity="right"
-        android:textColor="@color/white">
+        android:textColor="@color/black">
     </TextView>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/change_box"
+    <TextView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/changeInPrice"
         android:layout_height="wrap_content"
         android:layout_width="80dp"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:gravity="right"
         android:layout_marginLeft="10dp"
         android:padding="20dp"
         android:maxLines="1"
         android:drawablePadding="20dp"
         app:autoSizeMaxTextSize="24sp"
-        app:autoSizeTextType="uniform"
         android:background="@drawable/pill_box">
     </TextView>
 </TableRow>

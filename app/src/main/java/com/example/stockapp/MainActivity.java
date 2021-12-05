@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements StocksAdapter.stockClickListener,
+public class MainActivity extends AppCompatActivity implements StocksAdapter.StockClickedListener,
         NetworkingService.NetworkingListener {
     List<Stock> stocks = new ArrayList<>();
     RecyclerView recyclerView;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements StocksAdapter.sto
         networkingManager.getAllStocksFromApi();
         adapter = new StocksAdapter(this,stocks);
         recyclerView.setAdapter(adapter);
-        setTitle("Search for new stocks");
+        setTitle("Search for a symbol");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

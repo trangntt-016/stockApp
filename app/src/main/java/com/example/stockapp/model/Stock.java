@@ -1,5 +1,7 @@
 package com.example.stockapp.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Stock {
     public String symbol;
@@ -42,6 +44,7 @@ public class Stock {
         this.securityType = securityType;
     }
 
+
     public Double getPrice() {
         if (bidPrice == null)
             return null;
@@ -60,17 +63,10 @@ public class Stock {
         return quote.getPrice();
     }
 
-    public static Double getPriceChange(Stock quote) {
-        if (quote == null || quote.getPrice() == null || quote.getPrevPrice() == null)
+    public Double getPriceChange() {
+        if (this.bidPrice == null || this.lastSalePrice == null)
             return null;
-        return quote.getPrice() - quote.getPrevPrice();
+        return this.bidPrice - this.lastSalePrice;
     }
 
-    public static Double getPercentChange(Stock quote) {
-        Double change = getPriceChange(quote);
-        if (change == null)
-            return null;
-        change = change/(quote.getPrevPrice());
-        return change * 100;
-    }
 }
