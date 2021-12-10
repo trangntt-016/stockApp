@@ -1,37 +1,45 @@
 package com.example.stockapp;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stockapp.model.Stock;
+import com.example.stockapp.utils.JsonUtils;
+import com.example.stockapp.utils.StockUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements StocksAdapter.StockClickedListener,
-        NetworkingService.NetworkingListener {
+NetworkingService.NetworkingListener{
     List<Stock> stocks = new ArrayList<>();
     RecyclerView recyclerView;
     StocksAdapter adapter;
     NetworkingService networkingManager;
-    JSonService jsonService;
+    JsonUtils jsonConverterUtils;
+    DatabaseService databaseService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         networkingManager = ((myApp)getApplication()).getNetworkingService();
-        jsonService = ((myApp)getApplication()).getJsonService();
+        jsonConverterUtils = ((myApp)getApplication()).getJsonService();
+        databaseService = DatabaseService.getDbInstance();
+
         networkingManager.listener = this;
         recyclerView = findViewById(R.id.stock_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,15 +73,15 @@ public class MainActivity extends AppCompatActivity implements StocksAdapter.Sto
                 return true;
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public boolean onQueryTextChange(String newText) {// after each char
-                if (newText.length() >= 3) {
+                if (newText.length() >0) {
                     // search for cities
-                    //networkingManager.initializeStocks(newText);
+                    networkingManager.searchForStocks(newText);
                 }
                 else {
-                    stocks = new ArrayList<>(0);
-                    adapter.stockList = stocks;
+                    networkingManager.getAllStocksFromApi();
                     adapter.notifyDataSetChanged();
 
                 }
@@ -83,23 +91,21 @@ public class MainActivity extends AppCompatActivity implements StocksAdapter.Sto
         return true;
     }
 
-    @Override
-    public void dataListener(String jsonString) {
-        // for testing
-        jsonString =   "[{\"symbol\": \"SNAP\",\"bidSize\": 200,\"bidPrice\": 110.94,\"askSize\": 100,\"askPrice\": 111.82,\"volume\": 177265,\"lastSalePrice\": 111.76,\"lastSaleSize\": 5,\"lastSaleTime\": 1480446905681,\"lastUpdated\": 1480446910557,\"sector\":\"softwareservices\",\"securityType\":\"commonstock\"}]";
-        stocks =  jsonService.getStocksFromJson(jsonString);
-        adapter = new StocksAdapter(this,stocks);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-    }
 
-    @Override
-    public void imageListener(Bitmap image) {
 
-    }
 
     @Override
     public void stockClicked(Stock selectedStock) {
 
+    }
+
+
+
+    @Override
+    public void dataListener(List<Stock> stockList) {
+        databaseService.setStockList(stockList);
+        adapter = new StocksAdapter(this,stockList);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 }

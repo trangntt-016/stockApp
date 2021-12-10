@@ -1,16 +1,20 @@
 package com.example.stockapp;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stockapp.model.Stock;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksViewHolder>{
@@ -61,18 +65,25 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
         return new StocksViewHolder(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull StocksViewHolder holder, int position) {
+        DecimalFormat dfChange = new DecimalFormat("###.###");
+        DecimalFormat dfBidPrice = new DecimalFormat("###,###");
         Stock stock = stockList.get(position);
         holder.symbolTv.setText(stock.symbol);
-        holder.bidPriceTv.setText(String.valueOf(stock.bidPrice));
+        holder.bidPriceTv.setText(dfBidPrice.format(stock.bidPrice));
         holder.sectorTv.setText(stock.sector);
-        holder.changeInPriceTv.setText(String.valueOf(stock.getPriceChange()));
+        holder.changeInPriceTv.setText(dfChange.format(stock.getPriceChange()));
 
     }
 
     @Override
     public int getItemCount() {
         return stockList.size();
+    }
+
+    public List<Stock>getStockList(){
+        return this.stockList;
     }
 }

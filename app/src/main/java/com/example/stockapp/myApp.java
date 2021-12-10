@@ -2,14 +2,20 @@ package com.example.stockapp;
 
 import android.app.Application;
 
+import com.example.stockapp.utils.JsonUtils;
+
 public class myApp extends Application {
     private NetworkingService networkingService = new NetworkingService();
 
-    public JSonService getJsonService() {
-        return jsonService;
+    public JsonUtils getJsonService() {
+        return jsonConverterUtils;
     }
 
-    private JSonService jsonService = new JSonService();
+//    public DatabaseService getDbService(){
+//        return DatabaseService.getDbInstance();
+//    }
+
+    private JsonUtils jsonConverterUtils = new JsonUtils();
 
 
     public NetworkingService getNetworkingService() {

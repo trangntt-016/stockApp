@@ -1,11 +1,17 @@
 package com.example.stockapp;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.RequiresApi;
+import androidx.room.util.DBUtil;
+
 import com.example.stockapp.model.Stock;
+import com.example.stockapp.utils.JsonUtils;
+import com.example.stockapp.utils.DbUtils;
+import com.example.stockapp.utils.StockUtils;
 
 import java.io.*;
 import java.io.IOException;
@@ -22,61 +28,19 @@ import java.util.concurrent.Executors;
 public class NetworkingService {
     private String TOKEN = "pk_84fdc2a79dc94e02a9eac3bfc3e1f717";
     private String symbolsURL = "https://cloud.iexapis.com/stable/tops?token=" + TOKEN;
-    private String weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=+" ;
-    private String  weatherURL2 = "+&appid=071c3ffca10be01d334505630d2c1a9c";
-    private String iconURL = "https://openweathermap.org/img/wn/";
-    private String iconURL2 = "@2x.png";
 
 
     public static ExecutorService networkExecutorService = Executors.newFixedThreadPool(4);
     public static Handler networkingHandler = new Handler(Looper.getMainLooper());
 
     interface NetworkingListener{
-        void dataListener(String josnString);
-        void imageListener(Bitmap image);
+        void dataListener(List<Stock> stockList);
     }
+
 
     public NetworkingListener listener;
 
-    public void searchForStock(String stockChars){
-        String urlString = symbolsURL + TOKEN;
-        //initializeStocks(urlString);
-    }
-
-    public void getWeatherDataForCity(String city){
-        String urlFoWeather = weatherURL + city + weatherURL2;
-        //initializeStocks(urlFoWeather);
-    }
-
-
-    public void getImageData(String icon){
-        String urlstr = iconURL + icon + iconURL2;
-        networkExecutorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL urlObj = new URL(urlstr);
-                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream) urlObj.getContent());
-                    networkingHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // any code here will run in main thread
-                            listener.imageListener(bitmap);
-                        }
-                    });
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-
     public void getAllStocksFromApi(){
-        final List<Stock> stockList = new ArrayList<>();
-        JSonService jSonService = null;
         networkExecutorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -97,12 +61,16 @@ public class NetworkingService {
                         jsonData +=line;
                     }
                     // the data is ready
-                    final String jsonStr = jsonData;
+                    //final String jsonStr = jsonData;
+                    final String jsonStr = DbUtils.getText();
+                    // convert from jSon to List<Stock>
+                    List<Stock> stocks =  JsonUtils.getStocksFromJson(jsonStr);
+                    final List<Stock>finalStocks = stocks;
                     networkingHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             // any code here will run in main thread
-                            listener.dataListener(jsonStr);
+                            listener.dataListener(finalStocks);
                         }
                     });
                 } catch (MalformedURLException e) {
@@ -118,5 +86,17 @@ public class NetworkingService {
             }
         });
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void searchForStocks(String stockChars){
+        final List<Stock>stockList = StockUtils.searchForStocks(stockChars);
+        networkingHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // any code here will run in main thread
+                listener.dataListener(stockList);
+            }
+        });
     }
 }

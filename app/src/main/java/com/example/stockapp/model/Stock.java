@@ -1,7 +1,5 @@
 package com.example.stockapp.model;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Stock {
     public String symbol;
