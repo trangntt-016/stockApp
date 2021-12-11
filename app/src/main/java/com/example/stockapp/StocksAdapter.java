@@ -34,7 +34,7 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
     }
 
 
-    public static class StocksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class StocksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView symbolTv;
         private final TextView sectorTv;
@@ -53,8 +53,8 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
 
         @Override
         public void onClick(View v) {
-//            Stock stock = stockList.get(getAdapterPosition());
-//            listener.stockClicked(stock);
+            Stock stock = stockList.get(getAdapterPosition());
+            listener.stockClicked(stock);
         }
 
     }

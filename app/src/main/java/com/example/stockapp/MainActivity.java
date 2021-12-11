@@ -15,9 +15,9 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
 import com.example.stockapp.utils.JsonUtils;
-import com.example.stockapp.utils.StockUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,16 +96,29 @@ NetworkingService.NetworkingListener{
 
     @Override
     public void stockClicked(Stock selectedStock) {
-
+        Intent intent = new Intent(this,CompanyActivity.class);
+        intent.putExtra("symbol",selectedStock.symbol);
+        startActivity(intent);
     }
 
 
 
     @Override
-    public void dataListener(List<Stock> stockList) {
+    public void stockDataListener(List<Stock> stockList) {
         databaseService.setStockList(stockList);
         adapter = new StocksAdapter(this,stockList);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void companyDataListener(Company company) {
+
+    }
+
+    @Override
+    public void companyLogoListener(Bitmap image) {
+
+    }
+
 }

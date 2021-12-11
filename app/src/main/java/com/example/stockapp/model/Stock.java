@@ -43,24 +43,6 @@ public class Stock {
     }
 
 
-    public Double getPrice() {
-        if (bidPrice == null)
-            return null;
-        return bidPrice;
-    }
-    public Double getPrevPrice() {
-        if (lastSalePrice == null)
-            return null;
-        return lastSalePrice;
-    }
-
-
-    public static Double getPrice(Stock quote) {
-        if (quote == null)
-            return null;
-        return quote.getPrice();
-    }
-
     public Double getPriceChange() {
         if (this.bidPrice == null || this.lastSalePrice == null)
             return null;

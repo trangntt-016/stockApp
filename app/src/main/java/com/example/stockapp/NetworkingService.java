@@ -1,13 +1,15 @@
 package com.example.stockapp;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.RequiresApi;
-import androidx.room.util.DBUtil;
 
+import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
 import com.example.stockapp.utils.JsonUtils;
 import com.example.stockapp.utils.DbUtils;
@@ -26,15 +28,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class NetworkingService {
-    private String TOKEN = "pk_84fdc2a79dc94e02a9eac3bfc3e1f717";
-    private String symbolsURL = "https://cloud.iexapis.com/stable/tops?token=" + TOKEN;
+    private final String symbolsURL = "https://cloud.iexapis.com/stable/tops?token=pk_84fdc2a79dc94e02a9eac3bfc3e1f717";
+    private final String companyURL = "https://api.polygon.io/v1/meta/symbols/AMZN/company?apiKey=ee9v19qRNzXpkUj4FVI7cyRg6LA2KRfs";
 
 
     public static ExecutorService networkExecutorService = Executors.newFixedThreadPool(4);
     public static Handler networkingHandler = new Handler(Looper.getMainLooper());
 
     interface NetworkingListener{
-        void dataListener(List<Stock> stockList);
+        void stockDataListener(List<Stock> stockList);
+        void companyDataListener(Company company);
+        void companyLogoListener(Bitmap image);
     }
 
 
@@ -70,7 +74,7 @@ public class NetworkingService {
                         @Override
                         public void run() {
                             // any code here will run in main thread
-                            listener.dataListener(finalStocks);
+                            listener.stockDataListener(finalStocks);
                         }
                     });
                 } catch (MalformedURLException e) {
@@ -85,8 +89,8 @@ public class NetworkingService {
 
             }
         });
-
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void searchForStocks(String stockChars){
@@ -95,7 +99,71 @@ public class NetworkingService {
             @Override
             public void run() {
                 // any code here will run in main thread
-                listener.dataListener(stockList);
+                listener.stockDataListener(stockList);
+            }
+        });
+    }
+
+    public void getCompanyDataForStock(String symbol){
+        networkExecutorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection httpURLConnection = null;
+                List<Company>companyList = new ArrayList<>();
+                try {
+                    // connect to api
+                    String jsonData = "";
+                    URL urlObj = new URL(companyURL);
+                    httpURLConnection = (HttpURLConnection) urlObj.openConnection();
+                    httpURLConnection.setRequestMethod("GET");// post, delete, put
+                    httpURLConnection.setRequestProperty("Conent-Type","application/json");
+                    // read data
+                    InputStream in = httpURLConnection.getInputStream();
+                    InputStreamReader ipReader = new InputStreamReader(in);
+                    final BufferedReader bfReader = new BufferedReader(ipReader);
+                    for (String line; (line = bfReader.readLine()) != null;) {
+                        jsonData +=line;
+                    }
+                    // the data is ready
+                    final Company company =  JsonUtils.getCompanyFromJson(jsonData);
+                    networkingHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // any code here will run in main thread
+                            listener.companyDataListener(company);
+                        }
+                    });
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    httpURLConnection.disconnect();
+                }
+            }
+        });
+    }
+
+    public void getLogoCompanyFromUrl(String logoUrl){
+        networkExecutorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL urlObj = new URL(logoUrl);
+                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream) urlObj.getContent());
+                    networkingHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // any code here will run in main thread
+                            listener.companyLogoListener(bitmap);
+                        }
+                    });
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

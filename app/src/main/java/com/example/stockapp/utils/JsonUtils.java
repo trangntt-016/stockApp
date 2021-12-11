@@ -1,5 +1,6 @@
 package com.example.stockapp.utils;
 
+import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
 import com.google.gson.Gson;
 
@@ -20,6 +21,15 @@ public class JsonUtils {
         stock.askPrice = (Double) (Math.round(stock.askPrice * 100.0)/100.0);
         return stock;
     }
+
+    public static Company convertJsonToCompanyEntity(String jsonStr) throws JSONException {
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        Gson gson= new Gson();
+        Company company = gson.fromJson(jsonObject.toString(),Company.class);
+        return company;
+    }
+
+
 
 
     public static ArrayList<Stock> getStocksFromJson(String jsonArr)  {
@@ -43,6 +53,17 @@ public class JsonUtils {
         if(!stocksList.isEmpty())    stocksList.subList(0, 50);
 
         return stocksList;
+    }
+
+    public static Company getCompanyFromJson(String jsonStr){
+        Company company = null;
+        try {
+            company = JsonUtils.convertJsonToCompanyEntity(jsonStr);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return company;
     }
 
 
