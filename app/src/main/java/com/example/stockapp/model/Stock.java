@@ -44,8 +44,8 @@ public class Stock {
 
 
     public Double getPriceChange() {
-        if (this.bidPrice == null || this.lastSalePrice == null)
-            return null;
+        if (this.bidPrice == null) this.bidPrice = 0.0;
+        if(this.lastSalePrice == null) this.lastSalePrice = 0.0;
         return this.bidPrice - this.lastSalePrice;
     }
 

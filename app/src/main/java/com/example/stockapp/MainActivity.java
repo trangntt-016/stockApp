@@ -30,7 +30,6 @@ NetworkingService.NetworkingListener{
     StocksAdapter adapter;
     NetworkingService networkingManager;
     JsonUtils jsonConverterUtils;
-    DatabaseService databaseService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ NetworkingService.NetworkingListener{
         setContentView(R.layout.activity_main);
         networkingManager = ((myApp)getApplication()).getNetworkingService();
         jsonConverterUtils = ((myApp)getApplication()).getJsonService();
-        databaseService = DatabaseService.getDbInstance();
 
         networkingManager.listener = this;
         recyclerView = findViewById(R.id.stock_list);
@@ -78,7 +76,7 @@ NetworkingService.NetworkingListener{
             public boolean onQueryTextChange(String newText) {// after each char
                 if (newText.length() >0) {
                     // search for cities
-                    networkingManager.searchForStocks(newText);
+                    networkingManager.searchForStocks(newText, stocks);
                 }
                 else {
                     networkingManager.getAllStocksFromApi();
@@ -105,7 +103,7 @@ NetworkingService.NetworkingListener{
 
     @Override
     public void stockDataListener(List<Stock> stockList) {
-        databaseService.setStockList(stockList);
+        this.stocks = stockList;
         adapter = new StocksAdapter(this,stockList);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

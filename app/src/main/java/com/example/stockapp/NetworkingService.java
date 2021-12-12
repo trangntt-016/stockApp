@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 
 public class NetworkingService {
     private final String symbolsURL = "https://cloud.iexapis.com/stable/tops?token=pk_84fdc2a79dc94e02a9eac3bfc3e1f717";
-    private final String companyURL = "https://api.polygon.io/v1/meta/symbols/AMZN/company?apiKey=ee9v19qRNzXpkUj4FVI7cyRg6LA2KRfs";
+    private String companyURL = "https://api.polygon.io/v1/meta/symbols/selectedSymbol/company?apiKey=ee9v19qRNzXpkUj4FVI7cyRg6LA2KRfs";
 
 
     public static ExecutorService networkExecutorService = Executors.newFixedThreadPool(4);
@@ -93,8 +93,8 @@ public class NetworkingService {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void searchForStocks(String stockChars){
-        final List<Stock>stockList = StockUtils.searchForStocks(stockChars);
+    public void searchForStocks(String stockChars, List<Stock>stocks){
+        final List<Stock>stockList = StockUtils.searchForStocks(stockChars, stocks);
         networkingHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -105,6 +105,8 @@ public class NetworkingService {
     }
 
     public void getCompanyDataForStock(String symbol){
+        companyURL = companyURL.replaceAll("selectedSymbol",symbol);
+
         networkExecutorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -140,6 +142,7 @@ public class NetworkingService {
                 }
                 finally {
                     httpURLConnection.disconnect();
+                    companyURL = companyURL.replaceAll(symbol, "selectedSymbol");
                 }
             }
         });
