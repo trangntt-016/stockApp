@@ -14,6 +14,8 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stockapp.model.Stock;
+import com.example.stockapp.model.WalletStock;
+import com.example.stockapp.model.WalletStockManager;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -25,6 +27,8 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
     Context mCtx;
     List<Stock> stockList;
     StockClickedListener listener;
+
+
 
     public interface StockClickedListener {
         void stockClicked(Stock selectedStock);
@@ -79,7 +83,7 @@ public class StocksAdapter extends RecyclerView.Adapter<StocksAdapter.StocksView
         holder.sectorTv.setText(stock.sector);
 
         Double afterRounding = Math.round(stock.getPriceChange() * Math.pow(10, 1)) / Math.pow(10, 1);
-        
+
         holder.changeInPriceTv.setText(String.valueOf(afterRounding));
         if(afterRounding < 0.0){
             holder.changeInPriceTv.setBackgroundColor(mCtx.getResources().getColor(R.color.red));

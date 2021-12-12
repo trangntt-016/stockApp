@@ -1,5 +1,6 @@
 package com.example.stockapp;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,12 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.stockapp.database.DatabaseManager;
+import com.example.stockapp.database.WalletStockDatabase;
 import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
+import com.example.stockapp.model.WalletStock;
+import com.example.stockapp.model.WalletStockManager;
 import com.example.stockapp.utils.JsonUtils;
 import com.example.stockapp.utils.StockUtils;
+import com.example.stockapp.utils.WalletStockUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.DecimalFormat;
@@ -36,6 +43,13 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
 
     List<Stock>stockList = null;
     Company selectedCompany = null;
+
+    static WalletStockManager walletStockManager = new WalletStockManager();
+    WalletStock walletStock;
+    DatabaseManager dbManager;
+    WalletStockDatabase db;
+
+    private AlertDialog.Builder dialogBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +75,36 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
 
         FloatingActionButton fab = findViewById(R.id.addToWallet);
         fab.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-            // add a new owner
-//            AddNewOwnerFragment fragment = new AddNewOwnerFragment();
-//            fragment.show(getSupportFragmentManager(),"1");
-//            fragment.listener = MainActivity.this;
+                // check if this stock already exists in the wallet
+                if(WalletStockUtils.isStockInWallet(selectedCompany.symbol, walletStockManager.getListOfWalletStocks())){
+                    dialogBuilder = new AlertDialog.Builder(view.getContext());
+                    dialogBuilder.setTitle("Error").setMessage("This symbol is already added in your wallet");
+                    dialogBuilder.setCancelable(true);
+
+                    dialogBuilder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }}
+                    );
+
+                    dialogBuilder.setPositiveButton("View Your Wallet", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }}
+                    );
+                    dialogBuilder.show();
+
+                };
             }
         });
+
+        db = DatabaseManager.getDBInstance(this);
+        dbManager = ((myApp)getApplication()).getDatabaseManager();
     }
 
 

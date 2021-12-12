@@ -2,6 +2,7 @@ package com.example.stockapp;
 
 import android.app.Application;
 
+import com.example.stockapp.database.DatabaseManager;
 import com.example.stockapp.utils.JsonUtils;
 
 public class myApp extends Application {
@@ -11,14 +12,16 @@ public class myApp extends Application {
         return jsonConverterUtils;
     }
 
-//    public DatabaseService getDbService(){
-//        return DatabaseService.getDbInstance();
-//    }
 
     private JsonUtils jsonConverterUtils = new JsonUtils();
 
-
     public NetworkingService getNetworkingService() {
         return networkingService;
+    }
+
+    private DatabaseManager databaseManager = new DatabaseManager();
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 }
