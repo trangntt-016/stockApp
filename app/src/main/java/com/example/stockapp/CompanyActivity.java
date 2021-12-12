@@ -1,13 +1,19 @@
 package com.example.stockapp;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +31,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +50,7 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
     Company selectedCompany = null;
 
     static WalletStockManager walletStockManager = new WalletStockManager();
-    WalletStock walletStock;
+    WalletStock walletStock = new WalletStock();
     DatabaseManager dbManager;
     WalletStockDatabase db;
 
@@ -94,17 +99,34 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
                     dialogBuilder.setPositiveButton("View Your Wallet", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            Intent intent = new Intent(view.getContext(),WalletStockListActivity.class);
+                            intent.putParcelableArrayListExtra("listOfWalletStocks",walletStockManager.getListOfWalletStocks());
+                            startActivity(intent);
                         }}
                     );
                     dialogBuilder.show();
 
-                };
+                }
+                else{
+                    walletStock.symbol = selectedCompany.symbol;
+                    walletStock.logo = selectedCompany.logo;
+                    walletStock.name = selectedCompany.name;
+
+                    walletStockManager.addNewWalletStock(walletStock);
+                    dbManager.insertNewWalletStock(walletStock);
+                    walletStock = new WalletStock();
+
+                    Toast.makeText(view.getContext()
+                            ,"Successfully added!",
+                            Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         db = DatabaseManager.getDBInstance(this);
         dbManager = ((myApp)getApplication()).getDatabaseManager();
+
     }
 
 
@@ -138,6 +160,36 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
     public void companyLogoListener(Bitmap image) {
         imageView.setImageBitmap(image);
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.wallet_stock_list_menu,menu);
+
+        return  true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        if(item.getItemId()== R.menu.wallet_stock_list_menu || item.getItemId()==R.id.view_wallet){
+            Intent intent = new Intent(getApplicationContext(),WalletStockListActivity.class);
+            intent.putParcelableArrayListExtra("listOfWalletStocks",walletStockManager.getListOfWalletStocks());
+            startActivity(intent);
+        }
+
+        else{
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }
+
+        return true;
+    }
+
+
 
 
 }

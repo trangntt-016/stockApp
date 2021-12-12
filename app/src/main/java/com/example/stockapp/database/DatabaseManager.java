@@ -21,15 +21,16 @@ public class DatabaseManager {
     Handler db_handler = new Handler(Looper.getMainLooper());
 
     public interface DatabaseListener {
-        void databaseAllDonationListener(List<WalletStock> list);
+        void databaseAllWalletStocksListener(List<WalletStock> list);
     }
 
     public DatabaseListener listener;
 
-
     private static void BuildDBInstance (Context context) {
-        db = Room.databaseBuilder(context,WalletStockDatabase.class,"wallet_db").build();
+        db = Room.databaseBuilder(context,WalletStockDatabase.class,"wallet_db")
+                .fallbackToDestructiveMigration().build();
     }
+
     public static WalletStockDatabase getDBInstance(Context context){
         if (db == null){
             BuildDBInstance(context);
@@ -46,7 +47,7 @@ public class DatabaseManager {
         });
     }
 
-    public void getAllDonations(){
+    public void getAllWalletStocks(){
         databaseExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -54,7 +55,7 @@ public class DatabaseManager {
                 db_handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        listener.databaseAllDonationListener(list);
+                        listener.databaseAllWalletStocksListener(list);
                     }
                 });
 

@@ -46,6 +46,8 @@ NetworkingService.NetworkingListener{
         adapter = new StocksAdapter(this,stocks);
         recyclerView.setAdapter(adapter);
         setTitle("Search for a symbol");
+
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

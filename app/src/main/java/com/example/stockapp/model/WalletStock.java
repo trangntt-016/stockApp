@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class WalletStock implements Parcelable {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int stockId;
 
     @ColumnInfo(name = "symbol")
@@ -18,26 +18,26 @@ public class WalletStock implements Parcelable {
     @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name = "logo_url")
-    public String logoUrl;
+    @ColumnInfo(name = "logo")
+    public String logo;
 
     public WalletStock(){
         this.symbol = null;
         this.name = null;
-        this.logoUrl = null;
+        this.logo = null;
     }
 
-    public WalletStock(String symbol, String name, String logoUrl){
+    public WalletStock(String symbol, String name, String logo){
         this.symbol = symbol;
         this.name = name;
-        this.logoUrl = logoUrl;
+        this.logo = logo;
     }
 
     protected WalletStock(Parcel in) {
         stockId = in.readInt();
         symbol = in.readString();
         name = in.readString();
-        logoUrl = in.readString();
+        logo = in.readString();
     }
 
     public static final Creator<WalletStock> CREATOR = new Creator<WalletStock>() {
@@ -62,6 +62,6 @@ public class WalletStock implements Parcelable {
         dest.writeInt(stockId);
         dest.writeString(symbol);
         dest.writeString(name);
-        dest.writeString(logoUrl);
+        dest.writeString(logo);
     }
 }
