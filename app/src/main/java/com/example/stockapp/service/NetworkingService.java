@@ -1,4 +1,4 @@
-package com.example.stockapp;
+package com.example.stockapp.service;
 
 
 import android.graphics.Bitmap;
@@ -12,7 +12,6 @@ import androidx.annotation.RequiresApi;
 import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
 import com.example.stockapp.utils.JsonUtils;
-import com.example.stockapp.utils.DbUtils;
 import com.example.stockapp.utils.StockUtils;
 
 import java.io.*;
@@ -35,7 +34,7 @@ public class NetworkingService {
     public static ExecutorService networkExecutorService = Executors.newFixedThreadPool(4);
     public static Handler networkingHandler = new Handler(Looper.getMainLooper());
 
-    interface NetworkingListener{
+    public interface NetworkingListener{
         void stockDataListener(List<Stock> stockList);
         void companyDataListener(Company company);
         void companyLogoListener(Bitmap image);
@@ -65,8 +64,8 @@ public class NetworkingService {
                         jsonData +=line;
                     }
                     // the data is ready
-                    //final String jsonStr = jsonData;
-                    final String jsonStr = DbUtils.getText();
+                    final String jsonStr = jsonData;
+                    //final String jsonStr = DbUtils.getText();
                     // convert from jSon to List<Stock>
                     List<Stock> stocks =  JsonUtils.getStocksFromJson(jsonStr);
                     final List<Stock>finalStocks = stocks;

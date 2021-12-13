@@ -1,4 +1,4 @@
-package com.example.stockapp;
+package com.example.stockapp.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,12 +18,16 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.stockapp.MainActivity;
+import com.example.stockapp.R;
 import com.example.stockapp.database.DatabaseManager;
 import com.example.stockapp.database.WalletStockDatabase;
 import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
 import com.example.stockapp.model.WalletStock;
 import com.example.stockapp.model.WalletStockManager;
+import com.example.stockapp.myApp;
+import com.example.stockapp.service.NetworkingService;
 import com.example.stockapp.utils.JsonUtils;
 import com.example.stockapp.utils.StockUtils;
 import com.example.stockapp.utils.WalletStockUtils;
@@ -34,7 +38,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 
-public class CompanyActivity extends AppCompatActivity implements NetworkingService.NetworkingListener{
+public class CompanyActivity extends AppCompatActivity implements NetworkingService.NetworkingListener, DatabaseManager.DatabaseListener {
     NetworkingService networkingManager;
     JsonUtils jsonConverterUtils;
 
@@ -53,6 +57,7 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
     WalletStock walletStock = new WalletStock();
     DatabaseManager dbManager;
     WalletStockDatabase db;
+    List<WalletStock>walletStockList = null;
 
     private AlertDialog.Builder dialogBuilder;
 
@@ -78,13 +83,18 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
         lastSalePriceTv = findViewById(R.id.company_lastSalePrice);
         volumeTv = findViewById(R.id.volume);
 
+        db = DatabaseManager.getDBInstance(this);
+        dbManager = ((myApp)getApplication()).getDatabaseManager();
+        dbManager.listener = this;
+        dbManager.getAllWalletStocks();
+
         FloatingActionButton fab = findViewById(R.id.addToWallet);
         fab.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
                 // check if this stock already exists in the wallet
-                if(WalletStockUtils.isStockInWallet(selectedCompany.symbol, walletStockManager.getListOfWalletStocks())){
+                if(WalletStockUtils.isStockInWallet(selectedCompany.symbol, walletStockList)){
                     dialogBuilder = new AlertDialog.Builder(view.getContext());
                     dialogBuilder.setTitle("Error").setMessage("This symbol is already added in your wallet");
                     dialogBuilder.setCancelable(true);
@@ -99,7 +109,7 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
                     dialogBuilder.setPositiveButton("View Your Wallet", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(view.getContext(),WalletStockListActivity.class);
+                            Intent intent = new Intent(view.getContext(), WalletStockListActivity.class);
                             intent.putParcelableArrayListExtra("listOfWalletStocks",walletStockManager.getListOfWalletStocks());
                             startActivity(intent);
                         }}
@@ -124,8 +134,6 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
             }
         });
 
-        db = DatabaseManager.getDBInstance(this);
-        dbManager = ((myApp)getApplication()).getDatabaseManager();
 
     }
 
@@ -190,6 +198,8 @@ public class CompanyActivity extends AppCompatActivity implements NetworkingServ
     }
 
 
-
-
+    @Override
+    public void databaseAllWalletStocksListener(List<WalletStock> list) {
+        this.walletStockList = list;
+    }
 }

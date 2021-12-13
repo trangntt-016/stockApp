@@ -3,6 +3,7 @@ package com.example.stockapp;
 import android.app.Application;
 
 import com.example.stockapp.database.DatabaseManager;
+import com.example.stockapp.service.NetworkingService;
 import com.example.stockapp.utils.JsonUtils;
 
 public class myApp extends Application {

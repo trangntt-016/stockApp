@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stockapp.model.Company;
 import com.example.stockapp.model.Stock;
+import com.example.stockapp.service.NetworkingService;
+import com.example.stockapp.ui.CompanyActivity;
+import com.example.stockapp.ui.StocksAdapter;
 import com.example.stockapp.utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -96,7 +99,7 @@ NetworkingService.NetworkingListener{
 
     @Override
     public void stockClicked(Stock selectedStock) {
-        Intent intent = new Intent(this,CompanyActivity.class);
+        Intent intent = new Intent(this, CompanyActivity.class);
         intent.putExtra("symbol",selectedStock.symbol);
         startActivity(intent);
     }

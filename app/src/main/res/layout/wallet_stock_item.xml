@@ -8,16 +8,17 @@
         android:padding="10dp"
         android:layout_weight="1"
         android:textColor="@color/teal_200"
-        android:text="Amount"
+        android:text="Symbol: "
         android:id="@+id/symbol"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textSize="25sp"/>
     <TextView
+        android:id="@+id/wallet_stock_name"
         android:padding="10dp"
-        android:text="Payment"
         android:textColor="@color/black"
         android:layout_weight="1"
-        android:id="@+id/payment_method"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textSize="25sp"/>
 </LinearLayout>

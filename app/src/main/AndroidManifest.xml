@@ -14,14 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StockApp">
         <activity
-            android:name=".WalletStockListActivity"
+            android:name=".ui.WalletStockListActivity"
             android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
         </activity>
         <activity
-            android:name=".CompanyActivity"
+            android:name=".ui.CompanyActivity"
             android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

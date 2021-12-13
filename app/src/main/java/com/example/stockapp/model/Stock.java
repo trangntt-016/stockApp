@@ -10,10 +10,7 @@ public class Stock {
     public Integer volume;
     public Double lastSalePrice;
     public Integer lastSaleSize;
-    public Long lastSaleTime;
-    public Long lastUpdated;
     public String sector;
-    public String securityType;
 
 
     public Stock(String symbol,
@@ -24,10 +21,8 @@ public class Stock {
                  Integer volume,
                  Double lastSalePrice,
                  Integer lastSaleSize,
-                 Long lastSaleTime,
-                 Long lastUpdated,
-                 String sector,
-                 String securityType) {
+                 String sector
+    ) {
         this.symbol = symbol;
         this.bidSize = bidSize;
         this.bidPrice = bidPrice;
@@ -36,10 +31,7 @@ public class Stock {
         this.volume = volume;
         this.lastSalePrice = lastSalePrice;
         this.lastSaleSize = lastSaleSize;
-        this.lastSaleTime = lastSaleTime;
-        this.lastUpdated = lastUpdated;
         this.sector = sector;
-        this.securityType = securityType;
     }
 
 

@@ -3,10 +3,8 @@ package com.example.stockapp.database;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.example.stockapp.model.Stock;
 import com.example.stockapp.model.WalletStock;
 
 import java.util.List;
@@ -21,8 +19,5 @@ public interface WalletStockDAO {
 
     @Query("SELECT * FROM WalletStock")
     List<WalletStock> getAll();
-
-
-
 
 }

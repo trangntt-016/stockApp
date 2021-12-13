@@ -20,11 +20,11 @@ public class DatabaseManager {
 
     Handler db_handler = new Handler(Looper.getMainLooper());
 
+    public DatabaseListener listener;
+
     public interface DatabaseListener {
         void databaseAllWalletStocksListener(List<WalletStock> list);
     }
-
-    public DatabaseListener listener;
 
     private static void BuildDBInstance (Context context) {
         db = Room.databaseBuilder(context,WalletStockDatabase.class,"wallet_db")
@@ -58,11 +58,7 @@ public class DatabaseManager {
                         listener.databaseAllWalletStocksListener(list);
                     }
                 });
-
             }
         });
-
     }
-
-
 }

@@ -12,8 +12,15 @@ import java.util.stream.Collectors;
 public class WalletStockUtils {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static boolean  isStockInWallet(String symbol, List<WalletStock>walletStockList){
-        List<WalletStock> founds = walletStockList.stream().filter(s->s.symbol.equals(symbol)).collect(Collectors.toList());
+        int left = 0, right = walletStockList.size() - 1;
+        while(left <=right){
+            if(walletStockList.get(left).symbol.equals(symbol)||walletStockList.get(right).symbol.equals(symbol)){
+                return true;
+            }
+            left++;
+            right--;
+        }
 
-        return !founds.isEmpty();
+        return false;
     }
 }
